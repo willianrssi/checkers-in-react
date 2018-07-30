@@ -17,13 +17,92 @@ class Board extends Component {
       [0, 'R', 0, 'R', 0, 'R', 0, 'R']
     ]
     this.state = {
-      board: INITIAL_BOARD
+      board: INITIAL_BOARD,
+      activePlayer: 'R',
+      selectedPiece: [],
+      possiblePlays: []
+    }
+    this.handleSelectPiece = this.handleSelectPiece.bind(this)
+  }
+
+  handleSelectPiece (row, column) {
+    let board = this.state.board.slice()
+    if (board[row][column] === this.state.activePlayer) {
+      // Verify if has selected piece
+      !this.state.selectedPiece.length ? this.setSelectedPiece(board, row, column) : this.changeSelectedPiece(board, row, column)
     }
   }
+
+  async changeSelectedPiece (board, row, column) {
+    let prevSelectedPiece = this.state.selectedPiece.slice()
+    board[prevSelectedPiece[0]][prevSelectedPiece[1]] = this.state.activePlayer
+    board[row][column] = 'S'
+    await this.setState({board, selectedPiece: [row, column]})
+    this.changePossiblePlays()
+  }
+
+  async setSelectedPiece (board, row, column) {
+    board[row][column] = 'S'
+    await this.setState({board, selectedPiece: [row, column]})
+    this.showPossiblePlays()
+  }
+
+  async changePossiblePlays () {
+    let prevPossiblePlays = this.state.possiblePlays.slice()
+    let board = this.state.board.slice()
+    prevPossiblePlays.forEach(position => {
+      board[position[0]][position[1]] = 0
+    })
+    await this.setState({possiblePlays: []})
+    this.showPossiblePlays()
+  }
+
+  showPossiblePlays () {
+    let selectedPiece = this.state.selectedPiece.slice()
+    let row = selectedPiece[0]
+    let column = selectedPiece[1]
+    let board = this.state.board.slice()
+    let playerFactorRow = this.state.activePlayer === 'R' ? -1 : 1
+    let possiblePlays = []
+
+    if (column !== 0 && column !== 7) {
+      if (board[row + playerFactorRow][column - 1] === 0) {
+        board[row + playerFactorRow][column - 1] = 'P'
+        possiblePlays.push([row + playerFactorRow, column - 1])
+      }
+      if (board[row + playerFactorRow][column + 1] === 0) {
+        board[row + playerFactorRow][column + 1] = 'P'
+        possiblePlays.push([row + playerFactorRow, column + 1])
+      }
+    }
+
+    if (column === 0) {
+      if (board[row + playerFactorRow][column + 1] === 0) {
+        board[row + playerFactorRow][column + 1] = 'P'
+        possiblePlays.push([row + playerFactorRow, column + 1])
+      }
+    }
+
+    if (column === 7) {
+      if (board[row + playerFactorRow][column - 1] === 0) {
+        board[row + playerFactorRow][column - 1] = 'P'
+        possiblePlays.push([row + playerFactorRow, column - 1])
+      }
+    }
+
+    this.setState({board, possiblePlays})
+  }
+
   render () {
     return (
       <Container>
-        {this.state.board.map((row, index) => <Row squares={row} key={index} rowNumber={index} />)}
+        {this.state.board.map((row, index) => (
+          <Row
+            squares={row}
+            key={index}
+            rowNumber={index}
+            handleSelectPiece={this.handleSelectPiece}
+            />))}
       </Container>
     )
   }

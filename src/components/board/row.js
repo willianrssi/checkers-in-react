@@ -3,9 +3,9 @@ import Square from './square'
 
 import styled from 'styled-components'
 
-const Row = ({squares, rowNumber}) => (
+const Row = ({squares, rowNumber, handleSelectPiece}) => (
   <Container>
-    {squares.map((square, index) => <Square key={index} square={square} colNumber={index} rowNumber={rowNumber} />)}
+    {squares.map((piece, index) => <Square key={index} piece={piece} colNumber={index} rowNumber={rowNumber} handleSelectPiece={handleSelectPiece} possiblePlay={piece === 'P'} />)}
   </Container>
 )
 
