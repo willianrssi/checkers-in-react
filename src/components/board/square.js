@@ -2,8 +2,8 @@ import React from 'react'
 import styled from 'styled-components'
 import Piece from './piece'
 
-const Square = ({piece, colNumber, rowNumber, handleSelectPiece, possiblePlay}) => (
-  <Container calcBackground={colNumber + rowNumber} possiblePlay={possiblePlay} >
+const Square = ({piece, colNumber, rowNumber, handleSelectPiece, possiblePlay, handleMovePiece}) => (
+  <Container calcBackground={colNumber + rowNumber} possiblePlay={possiblePlay} onClick={() => handleMovePiece(rowNumber, colNumber)} >
     {(!!piece && piece !== 'P') && <Piece color={piece} handleSelectPiece={() => handleSelectPiece(rowNumber, colNumber)} />}
   </Container>
 )

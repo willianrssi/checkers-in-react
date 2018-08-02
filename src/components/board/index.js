@@ -23,6 +23,7 @@ class Board extends Component {
       possiblePlays: []
     }
     this.handleSelectPiece = this.handleSelectPiece.bind(this)
+    this.handleMovePiece = this.handleMovePiece.bind(this)
   }
 
   handleSelectPiece (row, column) {
@@ -93,6 +94,32 @@ class Board extends Component {
     this.setState({board, possiblePlays})
   }
 
+  handleMovePiece (row, column) {
+    let board = this.state.board.slice()
+    let activePlayer
+    if (board[row][column] === 'P') {
+      let selectedPiece = this.state.selectedPiece.slice()
+      let possiblePlays = this.state.possiblePlays.slice()
+
+      board[selectedPiece[0]][selectedPiece[1]] = 0
+      selectedPiece = []
+
+      possiblePlays.forEach(position => {
+        board[position[0]][position[1]] = 0
+      })
+      possiblePlays = []
+
+      board[row][column] = this.state.activePlayer
+
+      activePlayer = this.state.activePlayer === 'R' ? 'B' : 'R'
+
+      this.setState({board, selectedPiece, possiblePlays, activePlayer})
+    }
+  }
+
+  clearSelectedPiece () {
+  }
+
   render () {
     return (
       <Container>
@@ -102,6 +129,7 @@ class Board extends Component {
             key={index}
             rowNumber={index}
             handleSelectPiece={this.handleSelectPiece}
+            handleMovePiece={this.handleMovePiece}
             />))}
       </Container>
     )
